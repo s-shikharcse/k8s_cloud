@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: docker-image-builder
+spec:
+  containers:
+   - name: exploratory
+     image: testing:python
+     command: ["/bin/sh", "-c", "cd Docker-assignment-multi-container", "python exploratory.py", "cd .. ", "mkdir result", "cp /Docker-assignment-multi-container/*.pkl /result"]
+     volumeMounts:  
+      - name: container_output
+        mountPath: /home/kslave1/container_output
+
+   - name: model1
+     image: testing:python
+     command: ["/bin/sh", "-c", "cd Docker-assignment-multi-container", "git pull", "python model_1.py", "cd ..", "mkdir result", "cp /Docker-assignment-multi-container/model_1_score_file.pkl /result"]
+     volumeMounts: 
+      - name: container_output
+        mountPath: /home/kslave1/container_output
+
+   - name: model2
+     image: testing:python
+     command: ["/bin/sh", "-c", "cd Docker-assignment-multi-container", "git pull", "python model_2.py", "cd ..", "mkdir result", "cp /Docker-assignment-multi-container/model_2_score_file.pkl /result"]
+     volumeMounts: 
+      - name: container_output
+        mountPath: /home/kslave1/container_output
+
+   - name: output
+     image: testing:python
+     command: ["/bin/sh", "-c", "cd Docker-assignment-multi-container", "git pull", "python output.py", "cd ..", "mkdir result", "cp /Docker-assignment-multi-container/dataOn*.txt /result"]
+     volumeMounts: 
+      - name: container_output
+        mountPath: /home/kslave1/container_output
+
+  volumes:
+   - names: container_output
+     emptyDir: {}    
